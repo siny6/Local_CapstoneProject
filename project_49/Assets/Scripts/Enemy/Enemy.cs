@@ -2,88 +2,162 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// ºÎ¸ğ Å¬·¡½º
 public abstract class Enemy : MonoBehaviour
 {
-    protected float speed; // ÀÌµ¿¼Óµµ
-    protected float hp; // Ã¼·Â
-    protected float damage; // °ø°İ·Â
+    protected float speed; // ï¿½Ìµï¿½ï¿½Óµï¿½
     
-    public float attackSpeed;   // °ø°İ¼Óµµ(ÃÊ´ç °ø°İ¼Óµµ)
-    
-    protected bool state = true; // ÇöÀç »óÅÂ true : ±âº»»óÅÂ, false : »óÅÂÀÌ»ó
-    public float lastAttackTime;
+    [SerializeField] // ************************************************************** ï¿½Ì°ï¿½ï¿½Ï¸ï¿½ privateï¿½Ì³ï¿½ protectedï¿½ï¿½ ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float hp; // Ã¼ï¿½ï¿½
 
-    public bool canAttack       // °ø°İ °¡´É »óÅÂ
+    public float hpFull;     // ****************
+
+    protected float damage; // ï¿½ï¿½ï¿½İ·ï¿½
+
+    public float attackSpeed;   // ï¿½ï¿½ï¿½İ¼Óµï¿½(ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½İ¼Óµï¿½)
+
+    protected bool state = true; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ true : ï¿½âº»ï¿½ï¿½ï¿½ï¿½, false : ï¿½ï¿½ï¿½ï¿½ï¿½Ì»ï¿½
+    public float lastAttackTime;
+    public bool canAttack       // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
         get
         {
-            // °ø°İ °£°İ °ú »óÅÂÀÌ»ó(cc±â ) ÆÇº°
+            if (attackSpeed == 0)                
+            {
+                return false;
+            }            
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì»ï¿½(ccï¿½ï¿½ ) ï¿½Çºï¿½
             float attackDelay = 1 / attackSpeed;
-            if (lastAttackTime + attackDelay <= Time.time)
+            if (lastAttackTime + attackDelay <= GameManager.gm.gameTime)
             {
                 return true;
             }
             return false;
         }
     }
+    public GameObject[] item; // Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+
+    protected Rigidbody2D rb;
+
+    public GameObject target; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+
+    public string id_enemy;
+
+    //==========
+    //ì• ë‹ˆë©”ì´ì…˜ ê´€ë ¨                   //  *******************************************************************************
+    protected Animator animator;
+
+    [SerializeField]
+    public bool isDead = false;
+
+    [SerializeField]
+    public Vector3 originScale;
 
 
-    public GameObject[] item; // Ã¼·ÂÀÌ ¾øÀ» ¶§ µå¶øÇÏ´Â ¾ÆÀÌÅÛ ¸®½ºÆ®
-
-    protected Rigidbody2D rigid;
-
-    public GameObject target; // µû¶ó°¥ ´ë»ó
 
     //=====================================================================================
 
-    // ÃÊ±âÈ­?
-    public abstract void InitEnemyStatus();
-
-    // °ø°İ
-    protected abstract void AttackCustom();
-
-
-    // playerÀÇ °ø°İ¿¡ Ãæµ¹ Player.cs¿¡¼­ Ã³¸®
-    protected void OnTriggerEnter2D(Collider2D other)
+    // ì´ˆê¸°í™”ì‘ì—… (ê³µí†µ)                         
+    public void InitEnemyStatus()
     {
-  
+        InitEnemyStatusCustom();                    // ê°œë³„ ëŠ¥ë ¥ì¹˜ ë¨¼ì € ì´ˆê¸°í™”
+        
+        GetComponent<Collider2D>().enabled = true;
+        transform.localScale = originScale;
 
+        isDead = false;
+        hp = hpFull;
     }
 
-    // ¾ÆÀÌÅÛ(exp) µå¶ø
+    // ê°œë³„ ëŠ¥ë ¥ì¹˜ ì´ˆê¸°í™”
+    public abstract void InitEnemyStatusCustom();
+
+    public abstract void InitEssentialEnemyInfo();
+
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(exp) ï¿½ï¿½ï¿½
     public void DropItem()
     {
-        for (int i = 0; i < item.Length; i++)
-            Instantiate(item[i], transform.position, Quaternion.identity);
+        // for (int i = 0; i < item.Length; i++)
+        //     Instantiate(item[i], transform.position, Quaternion.identity);
+        // Instantiate(item[0], transform.position, Quaternion.identity);   
+        
+        //ï¿½Ï´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ß¿ï¿½ È®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¼ï¿½, È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ********************************
+        GameObject dropItem = Instantiate(item[0], GameObject.Find("Items").transform);
+
+        dropItem.transform.position = transform.position;
     }
 
-    // Á×À½
-    protected void Death(GameObject obj)
+    // ï¿½ï¿½ï¿½ï¿½
+    protected void Death()                                  //********************************
     {
-        obj.SetActive(false);
-        gameObject.GetComponent<Collider2D>().enabled = true;
-        hp = 100;
+        //GetComponent<Collider2D>().enabled = false;
+        
+
+        float animationLength = 0;
+        if (animator !=null)
+        {
+            animator.SetTrigger("isDead");   // ì£½ëŠ” ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ   *******************************************************************************
+            animationLength = animator.GetCurrentAnimatorClipInfo(0)[0].clip.length;  // ì• ë‹ˆë©”ì´ì…˜ ê¸¸ì´ ì¸¡ì •
+        }
+       
+        
+        GameManager.gm.KillCount += 1;
+
+        DieCustom();
+        
         DropItem();
+
+        Invoke("GoBackToPool", animationLength);    // ì• ë‹ˆë©”ì´ì…˜ ëë‚˜ê³  í’€ë¡œ ë³´ë‚´ë²„ë¦¬ê¸° 
+
     }
 
-    // °ø°İ ¹ŞÀ½
-    protected void Damaged(float damage)
+    // í•´ë‹¹ ì ì„ ë¹„í™œì„±í™”í•˜ì—¬ í’€ë¡œ ë³´ë‚´ë²„ë¦¬ê¸°
+    public void GoBackToPool()          //********************************
+    {
+        EnemyPoolManager.epm.TakeToPool(this);
+  
+
+
+
+        // InitEnemyStatus();      // ëŠ¥ë ¥ì¹˜, ì •ë³´ ì´ˆê¸°í™” 
+    }
+
+
+    // public void Disappear()       //********************************
+    // {
+    //     gameObject.SetActive(false);
+    //     GetComponent<Collider2D>().enabled = true;
+    //     hp = hpFull;
+    // }
+
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public void Damaged(float damage)
     {
         hp -= damage;
-        if(hp <= 0)
+
+        int prob = Random.Range(1, 101);
+        if (prob <= target.GetComponent<Player>().Drain_prob)
+            target.GetComponent<Player>().ChangeHp(target.GetComponent<Player>().Drain);
+
+        if (hp <= 0)
         {
-            Death(gameObject);
+            Death();
         }
+    }
+
+    public void Healing(float heal)
+    {
+        // 1. ë§ˆì§€ë§‰ ê³µê²©ë°›ì€ ì‹œê°„ì—ì„œ ì¼ì •ì‹œê°„ ì§€ë‚˜ë©´ ìŠ¤ìŠ¤ë¡œ í
+        // 2. ë²„í”„ëª¬ìŠ¤í„° ê·¼ì²˜ì— ìˆë‹¤ê°€ í ë°›ìŒ
+        hp += heal;
     }
 
     //=========================================================================================
     //===================================
-    // ¹«±âÀÇ ÀüÅõ ÇÃ·Î¿ì
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·Î¿ï¿½
     //===================================
     public IEnumerator BattleFlow()
     {
-        while (true)
+        while (!isDead)     // ì£½ì€ ìƒíƒœê°€ ì•„ë‹ë•Œ ì „íˆ¬í”Œë¡œìš° 
         {
             AttackCustom();
 
@@ -93,37 +167,86 @@ public abstract class Enemy : MonoBehaviour
     }
 
     //=======================================
-    // °ø°İ_°øÅë
+    // ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½
     //=======================================
     public void Attack()
     {
-        // °ø°İ°¡´ÉÇÑ »óÈ²ÀÏ¶§ °ø°İ
+        // ï¿½ï¿½ï¿½İ°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È²ï¿½Ï¶ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (canAttack)
         {
-            lastAttackTime = Time.time;   // ¸¶Áö¸· °ø°İ ½Ã°£ °»½Å
+            lastAttackTime = GameManager.gm.gameTime;   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½
 
             AttackCustom();
         }
     }
 
+    // ï¿½ï¿½ï¿½ï¿½
+    protected abstract void AttackCustom();
+
+    //==============================================
+    void Awake()
+    {
+        originScale = transform.localScale;         // ê°€ì¥ ì²˜ìŒ
+    }
 
 
-    // »ı¼ºµÇ¸é, 
     void Start()
     {
-        rigid = GetComponent<Rigidbody2D>();
-        target = GameManager.instance.player; // µû¶ó°¥ ´ë»ó = ÇÃ·¹ÀÌ¾î
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();  //  *******************************************************************************
 
-        // ÃÊ±âÈ­ ÇÏ°í ÀüÅõ ÇÃ·Î¿ì ½ÃÀÛ ( Å¸°Ù Ã£°í, °ø°İ )
-        InitEnemyStatus();
+        target = GameManager.gm.player.gameObject; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ = ï¿½Ã·ï¿½ï¿½Ì¾ï¿½
+
+        // ï¿½Ê±ï¿½È­ ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // InitEnemyStatus();
+        
+    }
+
+    // í’€ì—ì„œ ë‚˜ì™”ì„ë•Œ ( ë¹„í™œì„± -> í™œì„±) ì „íˆ¬ ë£¨í‹´ ì‹œì‘
+    void OnEnable()
+    {
+        gameObject.AddComponent<EnemyType>();       // ì—ë„ˆë¯¸ íƒ€ì… ê²°ì • : ì¼ë‹¨ì€ ë¶„ì—´ ì‘ë™ì‹œí‚¤ê¸° ìœ„í•´.
+        GetComponent<EnemyType>().InitType();
+
+        InitEnemyStatus();  
         StartCoroutine(BattleFlow());
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        MoveCustom();
+        if(!isDead)
+        {
+            MoveCustom();
+        }
     }
 
 
     public abstract void MoveCustom();
+
+    public abstract void DieCustom(); //********************************
+
+
+
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        { 
+            float dmg = damage;
+
+            if (dmg != 0 )
+            { 
+                GameManager.gm.player.OnDamage(dmg);
+            }
+
+            //rigid.isKinematic = true;
+        }
+    }
+
+    //// ë„‰ë°±
+    ///ë„‰ë°± í˜ ë¬´ê¸°ë³„ ì°¨ì´ì 
+    //1. ë„‰ë°± ì§€ì†ì‹œê°„ ë™ì•ˆ ì´ë™ë¶ˆê°€
+    //2. velocity = 
+    // 3. or adforce impulse rigidbody ëª¨ë“œ
+
 }

@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 195267455}
   - component: {fileID: 195267454}
   - component: {fileID: 195267457}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -458,7 +458,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &369077481
 MonoBehaviour:
@@ -474,54 +474,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   makePoints: []
   Coor: {fileID: 2453813032575975926, guid: d4834c49273ce0842b9da6abb8ac507e, type: 3}
---- !u!1 &378016128
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 378016130}
-  - component: {fileID: 378016129}
-  m_Layer: 0
-  m_Name: BombRange
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!58 &378016129
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378016128}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 1
---- !u!4 &378016130
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378016128}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &411853200
 GameObject:
   m_ObjectHideFlags: 0
@@ -772,8 +724,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabs:
   - {fileID: 2563827659756102391, guid: b18ab96ed57379a4498a9c09c80044b8, type: 3}
-  - {fileID: 2259504966418653157, guid: 9298151bd88318d46a33e547fc539667, type: 3}
-  - {fileID: 8957340749766436375, guid: 7ad959df8c16edd4793b9e3f3c67cd47, type: 3}
+  - {fileID: 2563827659756102391, guid: b18ab96ed57379a4498a9c09c80044b8, type: 3}
+  - {fileID: 2563827659756102391, guid: b18ab96ed57379a4498a9c09c80044b8, type: 3}
   - {fileID: 2259504966418653157, guid: 9298151bd88318d46a33e547fc539667, type: 3}
 --- !u!4 &503296910
 Transform:
